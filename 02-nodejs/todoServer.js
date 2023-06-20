@@ -43,7 +43,82 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+const port = 3000;
 
 app.use(bodyParser.json());
+
+let todos = [];
+let obj = {
+  title : "Buy macos",
+  description : "Want to buy mac by today",
+  id: Math.floor(Math.random() * 1000000)
+}
+let obj1 = {
+  title : "Buy groceries",
+  description : "buy groceries  by today",
+  id: Math.floor(Math.random() * 1000000)
+}
+let obj2 = {
+  title : "go out",
+  description : "chill",
+  id: Math.floor(Math.random() * 1000000)
+}
+todos.push(obj);
+todos.push(obj1);
+todos.push(obj2);
+
+app.get('/todos', (req, res) => {
+  res.json(todos)
+})
+app.get('/todos/:id',(req,res)=>{
+  //const todo = todos.find(t => t.id === parseInt(req.params.id));
+  const todo = todos.find(t => t.id === parseInt(req.params.id));
+  if (!todo) {
+    res.status(404).send();
+  } else {
+    res.json(todo);
+  }
+})
+app.post('/todos',(req,res)=>{
+  let newTodo = {
+    title : req.body.title,
+    description : req.body.description,
+    id : Math.floor(Math.random()*100000)
+  }
+  todos.push(newTodo);
+  res.status(200).json(obj);
+})
+
+app.put('/todos/:id',(req,res)=>{
+  const todoIndex = todos.findIndex(t => t.id === parseInt(req.params.id));
+  if (todoIndex === -1) {
+    res.status(404).send();
+  } else {
+    todos[todoIndex].title = req.body.title;
+    todos[todoIndex].description = req.body.description;
+    res.json(todos[todoIndex]);
+  }
+})
+app.delete('/todos/:id',(req,res)=>{
+  let updated = false;
+  for(let i=0;i<todos.length;i++){
+    if(todos[i].id===parseInt(req.params.id)){
+      todos.splice(i,1);
+      updated = true;
+    }
+  }
+  if(updated){
+    res.status(200).send('deleted');
+  } 
+  else{
+    res.status(404).send('not found');
+  }
+})
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
+app.use((req, res, next) => {
+  res.status(404).send();
+});
 
 module.exports = app;
