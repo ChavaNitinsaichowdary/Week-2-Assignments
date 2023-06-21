@@ -86,7 +86,7 @@ app.post('/todos',(req,res)=>{
     id : Math.floor(Math.random()*100000)
   }
   todos.push(newTodo);
-  res.status(200).json(obj);
+  res.status(200).json(todos);
 })
 
 app.put('/todos/:id',(req,res)=>{
